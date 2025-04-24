@@ -7,11 +7,13 @@
  * Kings College is Urban, other hospitals are Rural 
  * Use the simple CASE form
 */
-
 SELECT
 	ps.PatientId
 	, ps.Hospital
-	, '???' AS HospitalLocation
+	, CASE ps.Hospital 
+		WHEN 'kings college' THEN 'Urban'
+		ELSE 'Rural'
+	  END AS HospitalLocation
 FROM
 	dbo.PatientStay ps
 ORDER BY
@@ -22,11 +24,14 @@ ORDER BY
  * Any ward that contains 'Surgery' is 'Surgical', otherwise 'Non Surgical'
  * Use the searched CASE form
 */
-
 SELECT
 	ps.PatientId
 	, ps.Hospital
-	, '???' AS WardType
+	, ps.Ward
+	, CASE 
+		WHEN ps.Ward LIKE '%Surgery%' THEN 'Surgical'
+		ELSE 'Non Surgical'
+	  END AS WardType
 FROM
 	dbo.PatientStay ps
 ORDER BY
@@ -40,7 +45,48 @@ ORDER BY
  * 
  * Optional advanced question: how many patients are in each PatientTariffGroup?
  */
-        
+
+SELECT
+	ps.PatientId
+	, ps.Hospital
+	, ps.AdmittedDate
+	, ps.Tariff
+	, CASE 
+		WHEN ps.Tariff >= 7 THEN 'High Tariff'
+		WHEN ps.Tariff <= 4 THEN 'Low Tariff'
+			ELSE 'Medium Tariff'
+			END AS PatientTariffGroup
+	FROM
+		PatientStay ps
+	
+
+
+
+
+
+
+
+SELECT 
+	CASE 
+		WHEN ps.Tariff >= 7 THEN 'High Tariff'
+		WHEN ps.Tariff >= 4 THEN 'Medium Tariff'
+		ELSE 'Low Tariff'
+	END AS PatientTariffGroup,
+	COUNT(*) as PatientCount
+FROM 
+	PatientStay ps
+GROUP BY
+	CASE 
+		WHEN ps.Tariff >= 7 THEN 'High Tariff'
+		WHEN ps.Tariff >= 4 THEN 'Medium Tariff'
+		ELSE 'Low Tariff'
+	END
+ORDER BY 
+	PatientTariffGroup;
+
+
+
+
 SELECT
 	ps.PatientId
 	, ps.AdmittedDate
